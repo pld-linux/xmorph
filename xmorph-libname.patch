@@ -1,0 +1,56 @@
+--- xmorph-current/gtkmorph/Makefile.am.orig	2003-12-10 15:37:25.000000000 +0100
++++ xmorph-current/gtkmorph/Makefile.am	2004-04-12 19:27:23.244737648 +0200
+@@ -55,10 +55,10 @@
+ 
+ if COND_GTK2
+ gtkmorph_LDADD = $(GTK_LIBS) $(GDK_PIXBUF_LIBS) @PACKAGE_LIBS@ $(INTLLIBS) \
+- $(NON_GUI_LIBS)  ../libmorph/libmorph.la ../glade2/interface.o ../glade2/support.o
++ $(NON_GUI_LIBS)  ../libmorph/libxmorph.la ../glade2/interface.o ../glade2/support.o
+ else
+ gtkmorph_LDADD = $(GTK_LIBS) $(GDK_PIXBUF_LIBS) @PACKAGE_LIBS@ $(INTLLIBS) \
+- $(NON_GUI_LIBS)  ../libmorph/libmorph.la ../glade1/interface.o ../glade1/support.o
++ $(NON_GUI_LIBS)  ../libmorph/libxmorph.la ../glade1/interface.o ../glade1/support.o
+ endif
+ 
+ 
+--- xmorph-current/libmorph/Makefile.am.orig	2003-12-10 17:39:22.000000000 +0100
++++ xmorph-current/libmorph/Makefile.am	2004-04-12 19:48:26.501693400 +0200
+@@ -7,13 +7,14 @@
+ #noinst_LIBRARIES =  libmorph.a
+ 
+ #LIBTOOL support
+-lib_LTLIBRARIES = libmorph.la
++lib_LTLIBRARIES = libxmorph.la
+ 
+-libmorph_la_LDFLAGS = -version-info 1:0:0
++libxmorph_la_LDFLAGS = -version-info 1:0:0
++libxmorph_la_LIBADD = -lm
+ 
+ pkginclude_HEADERS = mesh.h mesh-getext.h  RgbaImage.h    my_malloc.h  spl-array.h  spline.h  tga.h  warp.h warp2.h relax.h resample.h  warp-gtk.h  
+ 
+-libmorph_la_SOURCES =   my_malloc.c     warp.c   \
++libxmorph_la_SOURCES =   my_malloc.c     warp.c   \
+   mesh.c         spline.c   my_malloc.h  tga.c   tga.h  \
+   RgbaImage.c         spl-array.c   warp2.c \
+   relax.c  resample.c $(pkginclude_HEADERS)
+--- xmorph-current/morph/Makefile.am.orig	2003-05-27 08:58:55.000000000 +0200
++++ xmorph-current/morph/Makefile.am	2004-04-12 19:27:46.526198328 +0200
+@@ -8,6 +8,6 @@
+ 
+ bin_PROGRAMS = morph
+ 
+-morph_LDADD =   $(INTLLIBS)  ../libmorph/libmorph.la $(NON_GUI_LIBS)
++morph_LDADD =   $(INTLLIBS)  ../libmorph/libxmorph.la $(NON_GUI_LIBS)
+ 
+ morph_SOURCES =    main.c
+--- xmorph-current/xmorph/Makefile.am.orig	2003-05-27 08:58:55.000000000 +0200
++++ xmorph-current/xmorph/Makefile.am	2004-04-12 19:28:02.613752648 +0200
+@@ -36,7 +36,7 @@
+ 
+ 
+ xmorph_LDADD =  main-x.o  $(GIMPLIBS) $(XLIBS) $(NON_GUI_LIBS)  \
+-    $(INTLLIBS)  ../libmorph/libmorph.la 
++    $(INTLLIBS)  ../libmorph/libxmorph.la 
+ 
+ 
+ 
