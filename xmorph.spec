@@ -1,6 +1,6 @@
 #
 # Conditional build:
-# _without_gimp		without GIMP libraries (don't build as gimp plugin)
+%bcond_without	gimp	# without GIMP libraries (don't build as gimp plugin)
 #
 Summary:	An X Window System tool for creating morphed images
 Summary(pl):	Narzêdzie do morphingu pod X Window System
@@ -16,10 +16,10 @@ Patch0:		%{name}-makefile.patch
 Patch1:		%{name}-glibc.patch
 Patch2:		%{name}-gimp1.3.patch
 BuildRequires:	XFree86-devel
-%{!?_without_gimp:BuildRequires:	gimp-devel >= 1.2}
+%{?with_gimp:BuildRequires:	gimp-devel >= 1.2}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
-%if 0%{!?_without_gimp:1}
+%if %{with gimp}
 %define		gimpplugindir	%(gimptool --gimpplugindir)/plug-ins
 %endif
 
@@ -46,8 +46,8 @@ xmorph jest programem do cyfrowego przekszta³cania obrazów
 %{__make} depend
 %{__make} xmorph xmorph.man \
 	CC="%{__cc}" \
-	OPT="%{rpmcflags} %{!?_without_gimp:`gimptool --cflags` -DGIMP -DNEED_GIMP=1}" \
-	GIMPLIBS="%{!?_without_gimp:`gimptool --libs`}"
+	OPT="%{rpmcflags} %{?with_gimp:`gimptool --cflags` -DGIMP -DNEED_GIMP=1}" \
+	GIMPLIBS="%{?with_gimp:`gimptool --libs`}"
 
 %{__make} clean
 %{__make} morph \
@@ -61,7 +61,7 @@ install -d $RPM_BUILD_ROOT{%{_bindir},%{_mandir}/man1}
 install xmorph $RPM_BUILD_ROOT%{_bindir}
 install xmorph.man $RPM_BUILD_ROOT%{_mandir}/man1/xmorph.1
 
-%if 0%{!?_without_gimp:1}
+%if %{with gimp}
 install -d $RPM_BUILD_ROOT%{gimpplugindir}
 ln -sf %{_bindir}/xmorph $RPM_BUILD_ROOT%{gimpplugindir}
 %endif
@@ -74,6 +74,6 @@ rm -rf $RPM_BUILD_ROOT
 %doc README HISTORY
 %attr(755,root,root) %{_bindir}/xmorph
 %{_mandir}/man1/xmorph.1*
-%if 0%{!?_without_gimp:1}
+%if %{with gimp}
 %attr(755,root,root) %{gimpplugindir}/xmorph
 %endif
