@@ -55,13 +55,11 @@ install -d $RPM_BUILD_ROOT{%{_bindir},%{_mandir}/man1}
 install xmorph $RPM_BUILD_ROOT%{_bindir}
 install xmorph.man $RPM_BUILD_ROOT%{_mandir}/man1/xmorph.1x
 
-gzip -9nf README HISTORY
-
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc README.gz HISTORY.gz
+%doc README HISTORY
 %attr(755,root,root) %{_bindir}/xmorph
 %{_mandir}/man1/xmorph.1x*
