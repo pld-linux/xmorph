@@ -30,7 +30,8 @@ Install the xmorph package if you need a program that will create
 morphed images.
 
 %description -l pl
-xmorph jest programem do cyfrowego przekszta³cania obrazów (morphingu).
+xmorph jest programem do cyfrowego przekszta³cania obrazów
+(morphingu).
 
 %prep
 %setup -q -n %{name}-%{verfn}
