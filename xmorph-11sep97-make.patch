@@ -28,6 +28,15 @@
  #XLIBS=              -lXaw -lXmu -lXext -lXt -lcvt -lX11
  
  
+@@ -522,7 +522,7 @@
+ 	  ctrace -P -t 20 $$cfile > trace/$$cfile ; \
+ 	done
+ 
+-depend: ctags
++depend:
+ 	makedepend $(INCLUDE) $(SRCS)
+ 
+ 
 @@ -533,389 +534,3 @@
  
  
@@ -418,14 +427,3 @@
 -xmorph.o: /usr/include/linux/time.h /usr/include/time.h mesh.h image_diw.h
 -xmorph.o: RgbaImage.h sequence.h file_menu.h mesh_menu.h warp_menu.h
 -xmorph.o: help_menu.h my_malloc.h xmorph.h
---- Makefile~	Fri Oct 24 14:20:37 1997
-+++ Makefile	Fri Oct 24 14:21:17 1997
-@@ -522,7 +522,7 @@
- 	  ctrace -P -t 20 $$cfile > trace/$$cfile ; \
- 	done
- 
--depend: ctags
-+depend:
- 	makedepend $(INCLUDE) $(SRCS)
- 
- 
