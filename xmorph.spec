@@ -10,11 +10,13 @@ Version:	2001.07.27
 Release:	3
 License:	GPL
 Group:		X11/Applications/Graphics
-Source0:	http://www.colorado-research.com/~gourlay/software/Graphics/Xmorph/pub/%{name}-%{verfn}.tar.gz
+# TODO: update to existing version
+Source0:	http://dl.sourceforge.net/xmorph/%{name}-%{verfn}.tar.gz
 # Source0-md5:	a21e22aa7d9887cc0e85b97cdeceacbd
 Patch0:		%{name}-makefile.patch
 Patch1:		%{name}-glibc.patch
 Patch2:		%{name}-gimp1.3.patch
+URL:		http://xmorph.sourceforge.net/
 BuildRequires:	XFree86-devel
 %{?with_gimp:BuildRequires:	gimp-devel >= 1:1.2}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
