@@ -1,11 +1,12 @@
-Summary:	An X Window System tool for creating morphed images.
+Summary:	An X Window System tool for creating morphed images
 Name:		xmorph
 Version:	1996.07.12
 Release:	7
-Copyright:	GPL
-Group:		Amusements/Graphics
-Source:		ftp://ftp.x.org/contrib/graphics/%{name}-11sep97.tar.gz
-Patch:		xmorph-11sep97-make.patch
+License:	GPL
+Group:		X11/Applications/Graphics
+Group(pl):	X11/Aplikacje/Grafika
+Source0:	ftp://ftp.x.org/contrib/graphics/%{name}-11sep97.tar.gz
+Patch0:		xmorph-11sep97-make.patch
 Patch1:		xmorph-11sep97-glibc.patch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -13,13 +14,13 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		_mandir		/usr/X11R6/man
 
 %description
-Xmorph is a digital image warping (aka morphing) program.  Xmorph
+Xmorph is a digital image warping (aka morphing) program. Xmorph
 provides the tools needed and comprehensible instructions for you to
-create morphs:  changing one image into another.  Xmorph runs under the
+create morphs: changing one image into another. Xmorph runs under the
 X Window System.
 
-Install the xmorph package if you need a program that will create morphed
-images.
+Install the xmorph package if you need a program that will create
+morphed images.
 
 %prep
 %setup -q -n xmorph-11sep97
