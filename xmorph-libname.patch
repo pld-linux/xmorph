@@ -1,17 +1,18 @@
---- xmorph-current/gtkmorph/Makefile.am.orig	2003-12-10 15:37:25.000000000 +0100
-+++ xmorph-current/gtkmorph/Makefile.am	2004-04-12 19:27:23.244737648 +0200
-@@ -55,10 +55,10 @@
+--- xmorph-current/gtkmorph/Makefile.am.orig	2004-07-15 11:23:15.000000000 +0200
++++ xmorph-current/gtkmorph/Makefile.am	2004-09-04 23:06:08.950445280 +0200
+@@ -82,11 +82,11 @@
  
  if COND_GTK2
- gtkmorph_LDADD = $(GTK_LIBS) $(GDK_PIXBUF_LIBS) @PACKAGE_LIBS@ $(INTLLIBS) \
-- $(NON_GUI_LIBS)  ../libmorph/libmorph.la ../glade2/interface.o ../glade2/support.o
-+ $(NON_GUI_LIBS)  ../libmorph/libxmorph.la ../glade2/interface.o ../glade2/support.o
+ gtkmorph_LDADD = $(GTK_LIBS) $(GTHREAD_LIBS) $(GDK_PIXBUF_LIBS)  $(INTLLIBS) \
+- $(NON_GUI_LIBS)  ../libmorph/libmorph.la 	 \
++ $(NON_GUI_LIBS)  ../libmorph/libxmorph.la 	 \
+     ../glade2/interface.o ../glade2/support.o $(wl)
  else
- gtkmorph_LDADD = $(GTK_LIBS) $(GDK_PIXBUF_LIBS) @PACKAGE_LIBS@ $(INTLLIBS) \
-- $(NON_GUI_LIBS)  ../libmorph/libmorph.la ../glade1/interface.o ../glade1/support.o
-+ $(NON_GUI_LIBS)  ../libmorph/libxmorph.la ../glade1/interface.o ../glade1/support.o
+ gtkmorph_LDADD = $(GTK_LIBS) $(GDK_PIXBUF_LIBS) $(INTLLIBS) \
+- $(NON_GUI_LIBS)  ../libmorph/libmorph.la 	 \
++ $(NON_GUI_LIBS)  ../libmorph/libxmorph.la 	 \
+     ../glade1/interface.o ../glade1/support.o $(wl)
  endif
- 
  
 --- xmorph-current/libmorph/Makefile.am.orig	2003-12-10 17:39:22.000000000 +0100
 +++ xmorph-current/libmorph/Makefile.am	2004-04-12 19:48:26.501693400 +0200
