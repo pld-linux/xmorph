@@ -1,0 +1,18 @@
+--- xmorph-current/doc/xmorph.texinfo.orig	2003-05-27 08:58:55.000000000 +0200
++++ xmorph-current/doc/xmorph.texinfo	2004-04-12 19:42:51.339645776 +0200
+@@ -7,11 +7,10 @@
+ 
+ @ignore
+ @ifinfo
+-@format
+-START-INFO-DIR-ENTRY
+-* Xmorph: a digital image warping and dissolving, or morphing, program.
+-END-INFO-DIR-ENTRY
+-@end format
++@dircategory Graphics Utilities:
++@direntry
++* Xmorph: (xmorph).			Digital image warping and dissolving
++@end direntry
+ @end ifinfo
+ @end ignore
+ 
