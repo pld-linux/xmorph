@@ -167,3 +167,43 @@
  
                menuitem = XtVaCreateManagedWidget (label, smeBSBObjectClass,
                                                 dest_menu, NULL);
+--- xmorph-2001jul27/main.c.orig	2001-07-27 19:02:17.000000000 +0200
++++ xmorph-2001jul27/main.c	2003-06-19 16:17:33.000000000 +0200
+@@ -44,6 +44,15 @@
+ 
+ #include "main.h"
+ 
++#ifdef NEED_GIMP
++# include <libgimp/gimp.h>
++# ifdef OLD_GIMP
++#   include "gimp_compat.h"
++# endif /* OLD_GIMP */
++/* from xmorph.c */
++extern GimpPlugInInfo PLUG_IN_INFO;
++#endif /* NEED_GIMP */
++
+ 
+ 
+ 
+@@ -93,9 +102,6 @@
+   return (atan((x - 0.5) * SHARPNESS * 2.0) + as) / (2.0 * as);
+ }
+ 
+-
+-
+-
+ int
+ main(int argc, char **argv)
+ {
+@@ -145,7 +151,11 @@
+ #  endif    
+ 
+     /* gimp_main () returns 1 if xmorph wasn't invoked by GIMP */
++#  if ((GIMP_MAJOR_VERSION > 1) || ((GIMP_MAJOR_VERSION == 1) && (GIMP_MINOR_VERSION > 3)) || ((GIMP_MAJOR_VERSION == 1) && (GIMP_MINOR_VERSION == 3) && (GIMP_MICRO_VERSION >= 15)))
++    result = gimp_main (&PLUG_IN_INFO, argc, argv);
++#  else
+     result = gimp_main (argc, argv);
++#endif
+ 
+ #  ifdef OLD_GIMP
+     g_set_message_handler (old_print_func);

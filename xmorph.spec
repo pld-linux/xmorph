@@ -7,7 +7,7 @@ Summary(pl):	Narzêdzie do morphingu pod X Window System
 Name:		xmorph
 Version:	2001.07.27
 %define	verfn	2001jul27
-Release:	1
+Release:	2
 License:	GPL
 Group:		X11/Applications/Graphics
 Source0:	http://www.colorado-research.com/~gourlay/software/Graphics/Xmorph/pub/%{name}-%{verfn}.tar.gz
