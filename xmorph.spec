@@ -16,7 +16,7 @@ Patch0:		%{name}-makefile.patch
 Patch1:		%{name}-glibc.patch
 Patch2:		%{name}-gimp1.3.patch
 BuildRequires:	XFree86-devel
-%{?with_gimp:BuildRequires:	gimp-devel >= 1.2}
+%{?with_gimp:BuildRequires:	gimp-devel >= 1:1.2}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %if %{with gimp}
