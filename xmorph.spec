@@ -1,14 +1,22 @@
+#
+# Conditional build:
+# _without_gimp		without GIMP libraries (don't build as gimp plugin)
+#
 Summary:	An X Window System tool for creating morphed images
+Summary(pl):	Narzêdzie do morphingu pod X Window System
 Name:		xmorph
-Version:	1996.07.12
-Release:	7
+Version:	2001.07.27
+%define	verfn	2001jul27
+Release:	1
 License:	GPL
 Group:		X11/Applications/Graphics
 Group(de):	X11/Applikationen/Grafik
 Group(pl):	X11/Aplikacje/Grafika
-Source0:	ftp://ftp.x.org/contrib/graphics/%{name}-11sep97.tar.gz
-Patch0:		%{name}-11sep97-make.patch
-Patch1:		%{name}-11sep97-glibc.patch
+Source0:	http://www.colorado-research.com/~gourlay/software/Graphics/Xmorph/pub/%{name}-%{verfn}.tar.gz
+Patch0:		%{name}-makefile.patch
+Patch1:		%{name}-glibc.patch
+BuildRequires:	XFree86-devel
+%{!?_without_gimp:BuildRequires:	gimp-devel}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_prefix		/usr/X11R6
@@ -23,14 +31,23 @@ X Window System.
 Install the xmorph package if you need a program that will create
 morphed images.
 
+%description -l pl
+xmorph jest programem do cyfrowego przekszta³cania obrazów (morphingu).
+
 %prep
-%setup -q -n xmorph-11sep97
+%setup -q -n %{name}-%{verfn}
 %patch0 -p1
 %patch1 -p1
 
 %build
 %{__make} depend
-%{__make} RPM_OPT_FLAGS="%{rpmcflags}"
+%{__make} xmorph xmorph.man \
+	CC="%{__cc}" \
+	OPT="%{rpmcflags} %{!?_without_gimp:-DGIMP -DNEED_GIMP=1}" \
+	%{?_without_gimp:GIMPLIBS=""}
+
+%{__make} clean
+%{__make} morph CC="%{__cc}" OPT="%{rpmcflags}"
 
 %install
 rm -rf $RPM_BUILD_ROOT
