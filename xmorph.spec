@@ -13,10 +13,14 @@ Group:		X11/Applications/Graphics
 Source0:	http://www.colorado-research.com/~gourlay/software/Graphics/Xmorph/pub/%{name}-%{verfn}.tar.gz
 Patch0:		%{name}-makefile.patch
 Patch1:		%{name}-glibc.patch
+Patch2:		%{name}-gimp1.3.patch
 BuildRequires:	XFree86-devel
-%{!?_without_gimp:BuildRequires:	gimp-devel}
+%{!?_without_gimp:BuildRequires:	gimp-devel >= 1.2}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
+%if 0%{!?_without_gimp:1}
+%define		gimpplugindir	%(gimp-config --gimpplugindir)/plug-ins
+%endif
 
 %description
 Xmorph is a digital image warping (aka morphing) program. Xmorph
@@ -35,13 +39,14 @@ xmorph jest programem do cyfrowego przekszta³cania obrazów
 %setup -q -n %{name}-%{verfn}
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
 %{__make} depend
 %{__make} xmorph xmorph.man \
 	CC="%{__cc}" \
-	OPT="%{rpmcflags} %{!?_without_gimp:-DGIMP -DNEED_GIMP=1}" \
-	%{?_without_gimp:GIMPLIBS=""}
+	OPT="%{rpmcflags} %{!?_without_gimp:`gimp-config --cflags` -DGIMP -DNEED_GIMP=1}" \
+	GIMPLIBS="%{!?_without_gimp:`gimp-config --libs`}"
 
 %{__make} clean
 %{__make} morph CC="%{__cc}" OPT="%{rpmcflags}"
@@ -51,7 +56,12 @@ rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_bindir},%{_mandir}/man1}
 
 install xmorph $RPM_BUILD_ROOT%{_bindir}
-install xmorph.man $RPM_BUILD_ROOT%{_mandir}/man1/xmorph.1x
+install xmorph.man $RPM_BUILD_ROOT%{_mandir}/man1/xmorph.1
+
+%if 0%{!?_without_gimp:1}
+install -d $RPM_BUILD_ROOT%{gimpplugindir}
+ln -sf %{_bindir}/xmorph $RPM_BUILD_ROOT%{gimpplugindir}
+%endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -60,4 +70,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc README HISTORY
 %attr(755,root,root) %{_bindir}/xmorph
-%{_mandir}/man1/xmorph.1x*
+%{_mandir}/man1/xmorph.1*
+%if 0%{!?_without_gimp:1}
+%attr(755,root,root) %{gimpplugindir}/xmorph
+%endif
