@@ -1,0 +1,22 @@
+--- xmorph-11sep97/my_malloc.h.mike	Mon Dec 21 15:55:26 1998
++++ xmorph-11sep97/my_malloc.h	Mon Dec 21 15:56:04 1998
+@@ -7,18 +7,13 @@
+ 
+ #ifndef _MY_MALLOC_H__INCLUDED_
+ #define _MY_MALLOC_H__INCLUDED_
++#include <string.h>
+ 
+ #ifdef __cplusplus
+ extern "C" {
+ #endif
+ 
+ 
+-
+-
+-/* GNU C header file for string.h is broken. */
+-#ifdef __GNUC__
+-extern char *strdup (const char *s);
+-#endif
+ 
+ 
+ 
