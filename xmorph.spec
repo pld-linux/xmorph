@@ -7,7 +7,7 @@ Summary(pl):	Narzêdzie do morphingu pod X Window System
 Name:		xmorph
 Version:	2001.07.27
 %define	verfn	2001jul27
-Release:	2
+Release:	3
 License:	GPL
 Group:		X11/Applications/Graphics
 Source0:	http://www.colorado-research.com/~gourlay/software/Graphics/Xmorph/pub/%{name}-%{verfn}.tar.gz
@@ -20,7 +20,7 @@ BuildRequires:	XFree86-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %if 0%{!?_without_gimp:1}
-%define		gimpplugindir	%(gimp-config --gimpplugindir)/plug-ins
+%define		gimpplugindir	%(gimptool --gimpplugindir)/plug-ins
 %endif
 
 %description
@@ -46,11 +46,13 @@ xmorph jest programem do cyfrowego przekszta³cania obrazów
 %{__make} depend
 %{__make} xmorph xmorph.man \
 	CC="%{__cc}" \
-	OPT="%{rpmcflags} %{!?_without_gimp:`gimp-config --cflags` -DGIMP -DNEED_GIMP=1}" \
-	GIMPLIBS="%{!?_without_gimp:`gimp-config --libs`}"
+	OPT="%{rpmcflags} %{!?_without_gimp:`gimptool --cflags` -DGIMP -DNEED_GIMP=1}" \
+	GIMPLIBS="%{!?_without_gimp:`gimptool --libs`}"
 
 %{__make} clean
-%{__make} morph CC="%{__cc}" OPT="%{rpmcflags}"
+%{__make} morph \
+	CC="%{__cc}" \
+	OPT="%{rpmcflags}"
 
 %install
 rm -rf $RPM_BUILD_ROOT
