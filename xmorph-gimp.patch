@@ -1,0 +1,524 @@
+--- xmorph-current/libmorph/RgbaImage.c.orig	2003-11-29 10:41:16.000000000 +0100
++++ xmorph-current/libmorph/RgbaImage.c	2004-04-12 18:52:07.396395488 +0200
+@@ -26,6 +26,9 @@
+ # define NEED_GIMP 1
+ # include <libgimp/gimp.h>
+ # include <string.h>
++# if (GIMP_MAJOR_VERSION < 1) || ((GIMP_MAJOR_VERSION == 1) && (GIMP_MINOR_VERSION < 3))
++#   define drawable_id id
++# endif
+ /* Number of steps in the progress meter. */
+ extern int prog_step;
+ extern int prog_nsteps;
+@@ -555,10 +558,10 @@
+ //   Allocates new image channel space.
+ */
+ int
+-rgbaImageUnGIMP (RgbaImageT *imgP, GDrawable *d)
++rgbaImageUnGIMP (RgbaImageT *imgP, GimpDrawable *d)
+ {
+-  GPixelRgn pixel_rgn;
+-  GDrawableType dtype;
++  GimpPixelRgn pixel_rgn;
++  GimpDrawableType dtype;
+   guint i, j, pel, npels, bsize, tileheight, colors;
+   guchar *data, *cmap;
+ 
+@@ -569,10 +572,10 @@
+   if(rgbaImageAlloc(imgP, d->width, d->height))
+     return -1;
+ 
+-  dtype = gimp_drawable_type (d->id);
++  dtype = gimp_drawable_type (d->drawable_id);
+ 
+   /* Get the color map. */
+-  cmap = gimp_image_get_cmap (gimp_drawable_image_id (d->id), &colors);
++  cmap = gimp_image_get_cmap (gimp_drawable_image_id (d->drawable_id), &colors);
+ 
+   /* Initialize the pixel region. */
+   gimp_pixel_rgn_init (&pixel_rgn, d, 0, 0, d->width, d->height, FALSE, FALSE);
+@@ -593,7 +596,7 @@
+       /* Convert all pixels to RGBA. */
+       switch (dtype)
+         {
+-        case RGBA_IMAGE:
++        case GIMP_RGBA_IMAGE:
+           for (j = 0; j < bsize; j += d->bpp)
+             {
+               imgP->ri[pel] = data[j];
+@@ -604,7 +607,7 @@
+             }
+           break;
+ 
+-        case RGB_IMAGE:
++        case GIMP_RGB_IMAGE:
+           for (j = 0; j < bsize; j += d->bpp)
+             {
+               imgP->ri[pel] = data[j];
+@@ -614,7 +617,7 @@
+             }
+           break;
+ 
+-        case GRAYA_IMAGE:
++        case GIMP_GRAYA_IMAGE:
+           for (j = 0; j < bsize; j += d->bpp)
+             {
+               imgP->ri[pel] = imgP->gi[pel] = imgP->bi[pel] = data[j];
+@@ -623,7 +626,7 @@
+             }
+           break;
+ 
+-        case GRAY_IMAGE:
++        case GIMP_GRAY_IMAGE:
+           for (j = 0; j < bsize; j += d->bpp)
+             {
+               imgP->ri[pel] = imgP->gi[pel] = imgP->bi[pel] = data[j];
+@@ -631,7 +634,7 @@
+             }
+           break;
+ 
+-        case INDEXEDA_IMAGE:
++        case GIMP_INDEXEDA_IMAGE:
+           for (j = 0; j < bsize; j += d->bpp)
+             {
+               if (data[j] < colors)
+@@ -647,7 +650,7 @@
+             }
+           break;
+ 
+-        case INDEXED_IMAGE:
++        case GIMP_INDEXED_IMAGE:
+           for (j = 0; j < bsize; j += d->bpp)
+             {
+               if (data[j] < colors)
+@@ -706,15 +709,15 @@
+ //   images in the dissolve.
+ */
+ int
+-rgbaImageGIMP (GDrawable *d, const RgbaImageT *siP, const RgbaImageT *diP,
++rgbaImageGIMP (GimpDrawable *d, const RgbaImageT *siP, const RgbaImageT *diP,
+                float dissolve)
+ {
+-  GPixelRgn pixel_rgn;
+-  GDrawableType dtype;
++  GimpPixelRgn pixel_rgn;
++  GimpDrawableType dtype;
+   guchar *data;
+   guint i, j, pel, npels, bsize, tileheight, bpp;
+ 
+-  if (d->id == -1)
++  if (d->drawable_id == -1)
+     {
+       fprintf (stderr, "rgbaImageGIMP: invalid drawable ID\n");
+       return -1;
+@@ -738,8 +741,8 @@
+       return -1;
+     }
+ 
+-  bpp = gimp_drawable_bpp (d->id);
+-  dtype = gimp_drawable_type (d->id);
++  bpp = gimp_drawable_bpp (d->drawable_id);
++  dtype = gimp_drawable_type (d->drawable_id);
+ 
+   /* Initialize the pixel region. */
+   gimp_pixel_rgn_init (&pixel_rgn, d, 0, 0, d->width, d->height, TRUE, FALSE);
+@@ -758,7 +761,7 @@
+       /* Convert all pixels from RGBA. */
+       switch (dtype)
+         {
+-        case RGBA_IMAGE:
++        case GIMP_RGBA_IMAGE:
+           for (j = 0; j < bsize; j += bpp)
+             {
+               data[j] = RED_DISSOLVE (siP, diP, pel, dissolve);
+@@ -769,7 +772,7 @@
+             }
+           break;
+ 
+-        case RGB_IMAGE:
++        case GIMP_RGB_IMAGE:
+           for (j = 0; j < bsize; j += bpp)
+             {
+               data[j] = RED_DISSOLVE (siP, diP, pel, dissolve);
+@@ -779,7 +782,7 @@
+             }
+           break;
+ 
+-        case GRAYA_IMAGE:
++        case GIMP_GRAYA_IMAGE:
+           for (j = 0; j < bsize; j += bpp)
+             {
+               data[j] = GRAY_DISSOLVE (siP, diP, pel, dissolve);
+@@ -788,7 +791,7 @@
+             }
+           break;
+ 
+-        case GRAY_IMAGE:
++        case GIMP_GRAY_IMAGE:
+           for (j = 0; j < bsize; j += bpp)
+             {
+               data[j] = GRAY_DISSOLVE (siP, diP, pel, dissolve);
+@@ -796,8 +799,8 @@
+             }
+           break;
+ 
+-        case INDEXEDA_IMAGE:
+-        case INDEXED_IMAGE:
++        case GIMP_INDEXEDA_IMAGE:
++        case GIMP_INDEXED_IMAGE:
+           return -1;
+         }
+ 
+--- xmorph-current/libmorph/RgbaImage.h.orig	2003-05-27 08:58:55.000000000 +0200
++++ xmorph-current/libmorph/RgbaImage.h	2004-04-12 18:52:19.389572248 +0200
+@@ -139,9 +139,9 @@
+ 
+ #ifdef NEED_GIMP
+ #include <libgimp/gimp.h>
+-int rgbaImageUnGIMP (RgbaImageT *self, GDrawable *d);
++int rgbaImageUnGIMP (RgbaImageT *self, GimpDrawable *d);
+ 
+-int rgbaImageGIMP (GDrawable *d, const RgbaImageT *siP, const RgbaImageT *diP,
++int rgbaImageGIMP (GimpDrawable *d, const RgbaImageT *siP, const RgbaImageT *diP,
+                    float dissolve);
+ #endif
+ 
+--- xmorph-current/xmorph/sequence.c.orig	2003-05-27 08:58:56.000000000 +0200
++++ xmorph-current/xmorph/sequence.c	2004-04-12 18:54:52.892236296 +0200
+@@ -20,6 +20,9 @@
+ #ifdef GIMP
+ # define NEED_GIMP 1
+ # include <libgimp/gimp.h>
++# if (GIMP_MAJOR_VERSION < 1) || ((GIMP_MAJOR_VERSION == 1) && (GIMP_MINOR_VERSION < 3))
++#   define drawable_id id
++# endif
+ /* Number of steps in the progress meter. */
+ int prog_step = 0;
+ int prog_nsteps = 0;
+@@ -164,18 +167,18 @@
+ #ifdef NEED_GIMP
+     if (plugin)
+       {
+-        extern GDrawable *drawable;
+-        GDrawable *d;
++        extern GimpDrawable *drawable;
++        GimpDrawable *d;
+         gint32 image_ID, layer_ID;
+ 
+-        image_ID = gimp_drawable_image_id (drawable->id);
++        image_ID = gimp_drawable_image_id (drawable->drawable_id);
+ 
+         /* Create a new layer in the source image. */
+         sprintf(iname, "%s%04i.tga", basename, frame);
+         layer_ID = gimp_layer_new (image_ID, iname,
+                                    dmP->src_img.ncols, dmP->src_img.nrows,
+-                                   gimp_drawable_type (drawable->id),
+-                                   100, NORMAL_MODE);
++                                   gimp_drawable_type (drawable->drawable_id),
++                                   100, GIMP_NORMAL_MODE);
+         gimp_image_add_layer (image_ID, layer_ID, 0);
+ 
+         d = gimp_drawable_get (layer_ID);
+--- xmorph-current/xmorph/xmorph.c.orig	2003-05-27 08:58:56.000000000 +0200
++++ xmorph-current/xmorph/xmorph.c	2004-04-12 19:04:07.882864896 +0200
+@@ -65,10 +65,10 @@
+ # include <libgimp/gimp.h>
+ 
+ static void query (void);
+-static void run (char *name, int nparams, GParam * param,
+-                 int *nreturn_vals, GParam ** return_vals);
++static void run (char *name, int nparams, GimpParam * param,
++                 int *nreturn_vals, GimpParam ** return_vals);
+ 
+-GPlugInInfo PLUG_IN_INFO =
++GimpPlugInInfo PLUG_IN_INFO =
+ {
+   NULL,                         /* init_proc */
+   NULL,                         /* quit_proc */
+@@ -491,7 +491,7 @@
+ #ifdef NEED_GIMP
+ 
+ /* Source drawable. */
+-GDrawable *drawable = NULL;
++GimpDrawable *drawable = NULL;
+ 
+ typedef struct {
+   gint32 dst;
+@@ -541,19 +541,19 @@
+ static void
+ query (void)
+ {
+-  static GParamDef args[] =
++  static GimpParamDef args[] =
+     {
+-      { PARAM_INT32, "run_mode", "Interactive, non-interactive"},
+-      { PARAM_IMAGE, "image", "Output image" },
+-      { PARAM_DRAWABLE, "src", "Source drawable"},
+-      { PARAM_DRAWABLE, "dst", "Destination drawable"},
+-      { PARAM_INT32, "steps", "Number of steps"},
+-      { PARAM_STRING, "srcmesh", "Source mesh filename"},
+-      { PARAM_STRING, "dstmesh", "Destination mesh filename"},
+-      { PARAM_STRING, "basename", "Basename of output layers"},
++      { GIMP_PDB_INT32, "run_mode", "Interactive, non-interactive"},
++      { GIMP_PDB_IMAGE, "image", "Output image" },
++      { GIMP_PDB_DRAWABLE, "src", "Source drawable"},
++      { GIMP_PDB_DRAWABLE, "dst", "Destination drawable"},
++      { GIMP_PDB_INT32, "steps", "Number of steps"},
++      { GIMP_PDB_STRING, "srcmesh", "Source mesh filename"},
++      { GIMP_PDB_STRING, "dstmesh", "Destination mesh filename"},
++      { GIMP_PDB_STRING, "basename", "Basename of output layers"},
+     };
+ 
+-  static GParamDef *return_vals = NULL;
++  static GimpParamDef *return_vals = NULL;
+   static int nargs = sizeof (args) / sizeof (args[0]);
+   static int nreturn_vals = 0;
+ 
+@@ -570,7 +570,7 @@
+       "1997-08-31",
+       "<Image>/Filters/Effects/Morph",
+       "RGB*, GRAY*",
+-      PROC_PLUG_IN,
++      GIMP_PLUGIN,
+       nargs, nreturn_vals,
+       args, return_vals);
+ }
+@@ -611,7 +611,7 @@
+   dst->ri = dst->gi = dst->bi = dst->ai = NULL;
+   if (xmvals.dst != -1)
+     {
+-      GDrawable *ddrawable;
++      GimpDrawable *ddrawable;
+       ddrawable = gimp_drawable_get (xmvals.dst);
+       if (rgbaImageUnGIMP (dst, ddrawable))
+         return 1;
+@@ -644,14 +644,18 @@
+ //   (http://www.gimp.org/).
+ */
+ static void
+-run (char *name, int nparams, GParam * param,
+-     int *nreturn_vals, GParam ** return_vals)
++run (char *name, int nparams, GimpParam * param,
++     int *nreturn_vals, GimpParam ** return_vals)
+ {
+-  static GParam values[2];
+-  GRunModeType run_mode;
++  static GimpParam values[2];
++# if (GIMP_MAJOR_VERSION < 1) || ((GIMP_MAJOR_VERSION == 1) && (GIMP_MINOR_VERSION < 3))
++  GimpRunModeType run_mode;
++# else
++  GimpRunMode run_mode;
++# endif
+   XtAppContext app;
+ 
+-  GStatusType  status = STATUS_SUCCESS;
++  GimpPDBStatusType  status = GIMP_PDB_SUCCESS;
+ 
+   run_mode = param[0].data.d_int32;
+   plugin = TRUE;
+@@ -659,24 +663,24 @@
+   *nreturn_vals = 1;
+   *return_vals = values;
+ 
+-  values[0].type = PARAM_STATUS;
+-  values[0].data.d_status = STATUS_SUCCESS;
++  values[0].type = GIMP_PDB_STATUS;
++  values[0].data.d_status = GIMP_PDB_SUCCESS;
+ 
+   drawable = gimp_drawable_get(param[2].data.d_drawable);
+ 
+   switch (run_mode)
+     {
+-    case RUN_INTERACTIVE:
++    case GIMP_RUN_INTERACTIVE:
+       /* Possibly retrieve data */
+       gimp_get_data(PLUG_IN_NAME, &xmvals);
+       break;
+ 
+-    case RUN_NONINTERACTIVE:
++    case GIMP_RUN_NONINTERACTIVE:
+       /* Make sure all the arguments are there!  */
+       if (nparams < 5 || nparams > 8)
+-        status = STATUS_CALLING_ERROR;
++        status = GIMP_PDB_CALLING_ERROR;
+ 
+-      if (status == STATUS_SUCCESS)
++      if (status == GIMP_PDB_SUCCESS)
+         {
+           /* Retrieve the parameters. */
+           xmvals.dst = param[3].data.d_drawable;
+@@ -711,18 +715,18 @@
+         }
+       break;
+ 
+-    case RUN_WITH_LAST_VALS:
++    case GIMP_RUN_WITH_LAST_VALS:
+       /*  Possibly retrieve data  */
+       gimp_get_data(PLUG_IN_NAME, &xmvals);
+       break;
+ 
+     default:
+-      status = STATUS_CALLING_ERROR;
++      status = GIMP_PDB_CALLING_ERROR;
+       break;
+     }
+ 
+   /* Now actually run the morph process. */
+-  if (status == STATUS_SUCCESS && !load_images ())
++  if (status == GIMP_PDB_SUCCESS && !load_images ())
+     {
+       char *srcmesh, *dstmesh;
+       srcmesh = (*xmvals.srcmesh) ? xmvals.srcmesh : 0;
+@@ -736,27 +740,27 @@
+                                    orig_image[0].nrows,
+                                    srcmesh, dstmesh,
+                                    &fakeargc, fakeargv,
+-                                   run_mode == RUN_INTERACTIVE);
++                                   run_mode == GIMP_RUN_INTERACTIVE);
+ 
+       /* Only run the main loop if we are interactive. */
+-      if (run_mode == RUN_INTERACTIVE)
++      if (run_mode == GIMP_RUN_INTERACTIVE)
+         {
+           /* Return to this spot on exit. */
+           if (!setjmp (exit_env))
+             XtAppMainLoop (app);
+ 
+           /* STATUS may be clobbered by longjmp, so reset it. */
+-          status = STATUS_SUCCESS;
++          status = GIMP_PDB_SUCCESS;
+         }
+       else
+         warp_sequence (&global_diw_map[0], xmvals.steps, xmvals.basename, FALSE, FALSE);
+ 
+       /* If run mode is interactive, flush displays */
+-      if (run_mode != RUN_NONINTERACTIVE)
++      if (run_mode != GIMP_RUN_NONINTERACTIVE)
+         gimp_displays_flush();
+ 
+       /* Store data */
+-      if (run_mode == RUN_INTERACTIVE)
++      if (run_mode == GIMP_RUN_INTERACTIVE)
+         {
+           /* Save the values that were set by the user. */
+           xmvals.steps = get_sequence_num_frames ();
+@@ -794,7 +798,7 @@
+         }
+     }
+   else
+-    status = STATUS_EXECUTION_ERROR;
++    status = GIMP_PDB_EXECUTION_ERROR;
+ 
+   values[0].data.d_status = status;
+   gimp_drawable_detach(drawable);
+--- xmorph-current/xmorph/file_menu.c.orig	2003-05-27 08:58:56.000000000 +0200
++++ xmorph-current/xmorph/file_menu.c	2004-04-12 19:08:02.778155384 +0200
+@@ -227,10 +227,10 @@
+   gint32 *images;
+   gint32 *layers;
+   gint32 *channels;
+-  int nimages;
+-  int nlayers;
+-  int nchannels;
+-  int i, j, k;
++  int nimages = 0;
++  int nlayers = 0;
++  int nchannels = 0;
++  int i, j, k, freename;
+ 
+   /* FIXME: how can we dynamically update this menu? */
+ 
+@@ -241,14 +241,21 @@
+   /* Add an entry for each of the drawables we have.  Shamelessly
+      stolen from libgimp/gimpmenu.c (gimp_drawable_menu_new) */
+ 
+-  images = gimp_query_images (&nimages);
++  images = gimp_image_list (&nimages);
+   for (i = 0, k = 0; i < nimages; i++)
+     /* FIXME: check any constraints. */
+     if (1)
+       {
+         name = gimp_image_get_filename (images[i]);
++	if(name)
++		freename = 1;
++	else {
++		name = "NONAME";
++		freename = 0;
++	}
+         image_label = g_new (char, strlen (name) + 16);
+         sprintf (image_label, "%s-%d", my_base_name (name), images[i]);
++	if(freename)
+         g_free (name);
+ 
+         layers = gimp_image_get_layers (images[i], &nlayers);
+@@ -257,8 +264,15 @@
+           if (1)
+             {
+               name = gimp_layer_get_name (layers[j]);
++	      if(name)
++		freename = 1;
++	      else {
++		name = "NONAME";
++		freename = 0;
++	      }
+               label = g_new (char, strlen (image_label) + strlen (name) + 2);
+               sprintf (label, "%s/%s", image_label, name);
++	      if(freename)
+               g_free (name);
+ 
+               menuitem = XtVaCreateManagedWidget (label, smeBSBObjectClass,
+@@ -276,8 +290,15 @@
+           if (1)
+             {
+               name = gimp_channel_get_name (channels[j]);
++	      if(name)
++		freename = 1;
++	      else {
++		name = "NONAME";
++		freename = 0;
++	      }
+               label = g_new (char, strlen (image_label) + strlen (name) + 2);
+               sprintf (label, "%s/%s", image_label, name);
++	      if(freename)
+               g_free (name);
+ 
+               menuitem = XtVaCreateManagedWidget (label, smeBSBObjectClass,
+--- xmorph-current/morph/main.c.orig	2003-05-27 08:58:55.000000000 +0200
++++ xmorph-current/morph/main.c	2004-04-12 19:15:16.518216872 +0200
+@@ -44,7 +44,14 @@
+ 
+ #include "../xmorph/main.h"
+ 
+-
++#ifdef NEED_GIMP
++# include <libgimp/gimp.h>
++# ifdef OLD_GIMP
++#   include "gimp_compat.h"
++# endif /* OLD_GIMP */
++/* from xmorph.c */
++extern GimpPlugInInfo PLUG_IN_INFO;
++#endif /* NEED_GIMP */
+ 
+ 
+ #define cl_match_arg(cmd) (!strcmp(argv[apc], cmd) && ((apc+1)<argc))
+@@ -123,7 +130,7 @@
+ 
+ #ifdef NEED_GIMP
+   {
+-    GPrintFunc old_print_func;
++    GimpPrintFunc old_print_func;
+     int result;
+     extern void null_print_func(gchar *);
+ 
+@@ -133,7 +140,11 @@
+        mode.  */
+     old_print_func = g_set_print_handler (null_print_func);
+     /* gimp_main () returns 1 if xmorph wasn't invoked by GIMP */
++#  if ((GIMP_MAJOR_VERSION > 1) || ((GIMP_MAJOR_VERSION == 1) && (GIMP_MINOR_VERSION > 3)) || ((GIMP_MAJOR_VERSION == 1) && (GIMP_MINOR_VERSION == 3) && (GIMP_MICRO_VERSION >= 15)))
++    result = gimp_main (&PLUG_IN_INFO, argc, argv);
++#  else
+     result = gimp_main (argc, argv);
++#  endif
+     g_set_message_handler (old_print_func);
+     if (result == 0)
+       exit (0);
