@@ -17,8 +17,6 @@ BuildRequires:	XFree86-devel
 %{!?_without_gimp:BuildRequires:	gimp-devel}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
-%define		_prefix		/usr/X11R6
-%define		_mandir		/usr/X11R6/man
 
 %description
 Xmorph is a digital image warping (aka morphing) program. Xmorph
