@@ -7,7 +7,7 @@ Group:		Amusements/Graphics
 Source:		ftp://ftp.x.org/contrib/graphics/%{name}-11sep97.tar.gz
 Patch:		xmorph-11sep97-make.patch
 Patch1:		xmorph-11sep97-glibc.patch
-BuildRoot:	/tmp/%{name}-%{version}-root
+BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_prefix		/usr/X11R6
 %define		_mandir		/usr/X11R6/man
