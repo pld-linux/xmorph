@@ -6,12 +6,12 @@
 Summary:	An X Window System tool for creating morphed images
 Summary(pl):	Narzêdzie do morphingu pod X Window System
 Name:		xmorph
-Version:	20040110
+Version:	20040717
 Release:	1
 License:	GPL
 Group:		X11/Applications/Graphics
 Source0:	http://dl.sourceforge.net/xmorph/%{name}_%{version}.tar.gz
-# Source0-md5:	f0fec1ab474649fbbc74f04e2b151e19
+# Source0-md5:	5a37a3f9f3591155b97de3e8d5b945ef
 Patch0:		%{name}-gimp.patch
 Patch1:		%{name}-libname.patch
 Patch2:		%{name}-info.patch
@@ -89,7 +89,7 @@ echo 'AM_DEFUN([AM_PATH_GTK],[$3])' > acinclude.m4
 %{__autoheader}
 %{__automake}
 %configure \
-	--with-gtk2
+	--with-gtk=2
 
 %{__make}
 
