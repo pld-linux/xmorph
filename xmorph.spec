@@ -17,8 +17,11 @@ Patch1:		%{name}-libname.patch
 Patch2:		%{name}-info.patch
 URL:		http://xmorph.sourceforge.net/
 BuildRequires:	XFree86-devel
+BuildRequires:	autoconf
+BuildRequires:	automake
 %{?with_gimp:BuildRequires:	gimp-devel >= 1:1.2}
 BuildRequires:	gtk+2-devel >= 2.0.0
+BuildRequires:	libtool
 BuildRequires:	pkgconfig
 BuildRequires:	texinfo
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
