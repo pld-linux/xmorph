@@ -1,22 +1,22 @@
---- xmorph-current/gtkmorph/Makefile.am.orig	2004-07-15 11:23:15.000000000 +0200
-+++ xmorph-current/gtkmorph/Makefile.am	2004-09-04 23:06:08.950445280 +0200
-@@ -82,11 +82,11 @@
- 
+--- xmorph-20060130/gtkmorph/Makefile.am.orig	2006-01-29 11:01:03.000000000 +0100
++++ xmorph-20060130/gtkmorph/Makefile.am	2006-02-04 16:58:22.545322500 +0100
+@@ -99,11 +99,11 @@
  if COND_GTK2
- gtkmorph_LDADD = $(GTK_LIBS) $(GTHREAD_LIBS) $(GDK_PIXBUF_LIBS)  $(INTLLIBS) \
+ # HACK $(GTHREAD_LIBS) 
+ gtkmorph_LDADD =  $(GTK_LIBS) $(GTHREAD_LIBS) $(GDK_PIXBUF_LIBS)  $(INTLLIBS) \
 - $(NON_GUI_LIBS)  ../libmorph/libmorph.la 	 \
 + $(NON_GUI_LIBS)  ../libmorph/libxmorph.la 	 \
-     ../glade2/interface.o ../glade2/support.o $(wl)
+     ../glade2/interface.o ../glade2/support.o $(wl) $(fl)
  else
  gtkmorph_LDADD = $(GTK_LIBS) $(GDK_PIXBUF_LIBS) $(INTLLIBS) \
 - $(NON_GUI_LIBS)  ../libmorph/libmorph.la 	 \
 + $(NON_GUI_LIBS)  ../libmorph/libxmorph.la 	 \
-     ../glade1/interface.o ../glade1/support.o $(wl)
+     ../glade1/interface.o ../glade1/support.o $(wl) $(fl)
  endif
  
---- xmorph-current/libmorph/Makefile.am.orig	2003-12-10 17:39:22.000000000 +0100
-+++ xmorph-current/libmorph/Makefile.am	2004-04-12 19:48:26.501693400 +0200
-@@ -7,13 +7,14 @@
+--- xmorph-20060130/libmorph/Makefile.am.orig	2006-01-28 15:50:16.000000000 +0100
++++ xmorph-20060130/libmorph/Makefile.am	2006-02-04 16:58:43.834653000 +0100
+@@ -7,13 +7,13 @@
  #noinst_LIBRARIES =  libmorph.a
  
  #LIBTOOL support
@@ -25,15 +25,14 @@
  
 -libmorph_la_LDFLAGS = -version-info 1:0:0
 +libxmorph_la_LDFLAGS = -version-info 1:0:0
-+libxmorph_la_LIBADD = -lm
  
- pkginclude_HEADERS = mesh.h mesh-getext.h  RgbaImage.h    my_malloc.h  spl-array.h  spline.h  tga.h  warp.h warp2.h relax.h resample.h  warp-gtk.h  
+ pkginclude_HEADERS = mesh.h mesh_t.h mesh-getext.h  RgbaImage.h    my_malloc.h  spl-array.h  spline.h  tga.h  warp.h warp2.h relax.h resample.h  warp-gtk.h  
  
 -libmorph_la_SOURCES =   my_malloc.c     warp.c   \
 +libxmorph_la_SOURCES =   my_malloc.c     warp.c   \
    mesh.c         spline.c   my_malloc.h  tga.c   tga.h  \
    RgbaImage.c         spl-array.c   warp2.c \
-   relax.c  resample.c $(pkginclude_HEADERS)
+   relax.c  resample.c braindead_msvc.h sinc_256.h resample_snippet.h \
 --- xmorph-current/morph/Makefile.am.orig	2003-05-27 08:58:55.000000000 +0200
 +++ xmorph-current/morph/Makefile.am	2004-04-12 19:27:46.526198328 +0200
 @@ -8,6 +8,6 @@
@@ -44,14 +43,11 @@
 +morph_LDADD =   $(INTLLIBS)  ../libmorph/libxmorph.la $(NON_GUI_LIBS)
  
  morph_SOURCES =    main.c
---- xmorph-current/xmorph/Makefile.am.orig	2003-05-27 08:58:55.000000000 +0200
-+++ xmorph-current/xmorph/Makefile.am	2004-04-12 19:28:02.613752648 +0200
-@@ -36,7 +36,7 @@
+--- xmorph-20060130/xmorph/Makefile.am.orig	2006-01-28 15:10:17.000000000 +0100
++++ xmorph-20060130/xmorph/Makefile.am	2006-02-04 16:58:59.583637250 +0100
+@@ -36,4 +36,4 @@
  
  
- xmorph_LDADD =  main-x.o  $(GIMPLIBS) $(XLIBS) $(NON_GUI_LIBS)  \
--    $(INTLLIBS)  ../libmorph/libmorph.la 
-+    $(INTLLIBS)  ../libmorph/libxmorph.la 
- 
- 
- 
+ xmorph_LDADD =  main-x.o  $(X_PRE_LIBS) $(X_LIBS) $(XLIBS) $(X_EXTRA_LIBS) \
+-	 $(GIMPLIBS) $(NON_GUI_LIBS) $(INTLLIBS)  ../libmorph/libmorph.la 
++	 $(GIMPLIBS) $(NON_GUI_LIBS) $(INTLLIBS)  ../libmorph/libxmorph.la 
