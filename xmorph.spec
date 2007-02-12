@@ -3,7 +3,7 @@
 %bcond_with	gimp	# build as gimp plugin (broken)
 #
 Summary:	An X Window System tool for creating morphed images
-Summary(pl):	Narzêdzie do morphingu pod X Window System
+Summary(pl.UTF-8):   NarzÄ™dzie do morphingu pod X Window System
 Name:		xmorph
 Version:	20060130
 Release:	1
@@ -37,45 +37,45 @@ provides the tools needed and comprehensible instructions for you to
 create morphs: changing one image into another. Xmorph runs under the
 X Window System.
 
-%description -l pl
-xmorph jest programem do cyfrowego przekszta³cania obrazów
-(morphingu). Pakiet dostarcza potrzebne narzêdzia oraz opis jak
-tworzyæ przekszta³cenia. Dzia³a w ¶rodowisku X Window System.
+%description -l pl.UTF-8
+xmorph jest programem do cyfrowego przeksztaÅ‚cania obrazÃ³w
+(morphingu). Pakiet dostarcza potrzebne narzÄ™dzia oraz opis jak
+tworzyÄ‡ przeksztaÅ‚cenia. DziaÅ‚a w Å›rodowisku X Window System.
 
 %package gtk
 Summary:	gtkmorph - GTK+ version of xmorph
-Summary(pl):	gtkmorph - wersja xmorpha oparta na GTK+
+Summary(pl.UTF-8):   gtkmorph - wersja xmorpha oparta na GTK+
 Group:		X11/Applications/Graphics
 Requires:	%{name} = %{version}-%{release}
 
 %description gtk
 gtkmorph - GTK+ version of xmorph.
 
-%description gtk -l pl
+%description gtk -l pl.UTF-8
 gtkmorph - wersja xmorpha oparta na GTK+.
 
 %package devel
 Summary:	Header files for xmorph library
-Summary(pl):	Pliki nag³ówkowe biblioteki xmorph
+Summary(pl.UTF-8):   Pliki nagÅ‚Ã³wkowe biblioteki xmorph
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
 
 %description devel
 Header files for xmorph library.
 
-%description devel -l pl
-Pliki nag³ówkowe biblioteki xmorph.
+%description devel -l pl.UTF-8
+Pliki nagÅ‚Ã³wkowe biblioteki xmorph.
 
 %package static
 Summary:	Static xmorph library
-Summary(pl):	Statyczna biblioteka xmorph
+Summary(pl.UTF-8):   Statyczna biblioteka xmorph
 Group:		Development/Libraries
 Requires:	%{name}-devel = %{version}-%{release}
 
 %description static
 Static xmorph library.
 
-%description static -l pl
+%description static -l pl.UTF-8
 Statyczna biblioteka xmorph.
 
 %prep
