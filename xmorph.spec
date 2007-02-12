@@ -3,7 +3,7 @@
 %bcond_with	gimp	# build as gimp plugin (broken)
 #
 Summary:	An X Window System tool for creating morphed images
-Summary(pl.UTF-8):   Narzędzie do morphingu pod X Window System
+Summary(pl.UTF-8):	Narzędzie do morphingu pod X Window System
 Name:		xmorph
 Version:	20060130
 Release:	1
@@ -44,7 +44,7 @@ tworzyć przekształcenia. Działa w środowisku X Window System.
 
 %package gtk
 Summary:	gtkmorph - GTK+ version of xmorph
-Summary(pl.UTF-8):   gtkmorph - wersja xmorpha oparta na GTK+
+Summary(pl.UTF-8):	gtkmorph - wersja xmorpha oparta na GTK+
 Group:		X11/Applications/Graphics
 Requires:	%{name} = %{version}-%{release}
 
@@ -56,7 +56,7 @@ gtkmorph - wersja xmorpha oparta na GTK+.
 
 %package devel
 Summary:	Header files for xmorph library
-Summary(pl.UTF-8):   Pliki nagłówkowe biblioteki xmorph
+Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki xmorph
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
 
@@ -68,7 +68,7 @@ Pliki nagłówkowe biblioteki xmorph.
 
 %package static
 Summary:	Static xmorph library
-Summary(pl.UTF-8):   Statyczna biblioteka xmorph
+Summary(pl.UTF-8):	Statyczna biblioteka xmorph
 Group:		Development/Libraries
 Requires:	%{name}-devel = %{version}-%{release}
 
