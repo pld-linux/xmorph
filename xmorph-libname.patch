@@ -33,9 +33,9 @@
    mesh.c         spline.c   my_malloc.h  tga.c   tga.h  \
    RgbaImage.c         spl-array.c   warp2.c \
    relax.c  resample.c braindead_msvc.h sinc_256.h resample_snippet.h \
---- xmorph-current/morph/Makefile.am.orig	2003-05-27 08:58:55.000000000 +0200
-+++ xmorph-current/morph/Makefile.am	2004-04-12 19:27:46.526198328 +0200
-@@ -8,6 +8,6 @@
+--- xmorph-20060817/morph/Makefile.am.orig	2024-02-03 18:48:43.628688400 +0100
++++ xmorph-20060817/morph/Makefile.am	2024-02-03 18:50:20.884828185 +0100
+@@ -8,7 +8,7 @@ INCLUDES = 	-I$(top_srcdir)/libmorph -I$
  
  bin_PROGRAMS = morph
  
@@ -43,6 +43,7 @@
 +morph_LDADD =   $(INTLLIBS)  ../libmorph/libxmorph.la $(NON_GUI_LIBS)
  
  morph_SOURCES =    main.c
+ 
 --- xmorph-20060130/xmorph/Makefile.am.orig	2006-01-28 15:10:17.000000000 +0100
 +++ xmorph-20060130/xmorph/Makefile.am	2006-02-04 16:58:59.583637250 +0100
 @@ -36,4 +36,4 @@

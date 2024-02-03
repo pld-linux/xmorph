@@ -1,0 +1,11 @@
+--- xmorph-20060817/gtkmorph/testfourier.cc.orig	2005-03-06 19:35:46.000000000 +0100
++++ xmorph-20060817/gtkmorph/testfourier.cc	2024-02-03 18:58:06.482305827 +0100
+@@ -149,7 +149,7 @@ int main(int argc,char* argv[])
+       result = gdk_pixbuf_save(dst,argv[7],"png",&error,NULL);
+       g_assert ((result  && !error ) || (!result && error ));
+       if(error)
+-	{g_warning((error)->message);g_error_free (error);}   
++	{g_warning("%s", (error)->message);g_error_free (error);}   
+   }
+   return 0;
+ 		     

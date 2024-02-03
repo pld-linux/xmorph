@@ -1,30 +1,33 @@
 #
 # Conditional build:
-%bcond_with	gimp	# build as gimp plugin (broken)
+%bcond_with	gimp	# build as gimp plugin (outdated, broken)
 #
 Summary:	An X Window System tool for creating morphed images
 Summary(pl.UTF-8):	Narzędzie do morphingu pod X Window System
 Name:		xmorph
-Version:	20060130
+Version:	20060817
 Release:	1
 License:	GPL
 Group:		X11/Applications/Graphics
-Source0:	http://dl.sourceforge.net/xmorph/%{name}_%{version}.tar.gz
-# Source0-md5:	09c386be10b4318070d58bdfe494830e
+Source0:	https://downloads.sourceforge.net/xmorph/%{name}_%{version}.tar.gz
+# Source0-md5:	b4128d90c458be6d2fca9fc6045b6ddb
 Patch0:		%{name}-gimp.patch
 Patch1:		%{name}-libname.patch
 Patch2:		%{name}-info.patch
-URL:		http://xmorph.sourceforge.net/
-BuildRequires:	XFree86-devel
-BuildRequires:	autoconf
+Patch3:		%{name}-format.patch
+Patch4:		%{name}-inline.patch
+URL:		https://xmorph.sourceforge.net/
+BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
 BuildRequires:	fftw3-devel >= 3.0
 %{?with_gimp:BuildRequires:	gimp-devel >= 1:1.2}
 BuildRequires:	gtk+2-devel >= 1:2.0.0
+BuildRequires:	libstdc++-devel
 BuildRequires:	libtool
 BuildRequires:	pkgconfig
 BuildRequires:	texinfo
 BuildRequires:	waili-devel
+BuildRequires:	xorg-lib-libX11-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %if %{with gimp}
@@ -83,12 +86,15 @@ Statyczna biblioteka xmorph.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
+%patch4 -p1
 
 echo 'AM_DEFUN([AM_PATH_GTK],[$3])' > acinclude.m4
 
 %build
+%{__gettextize}
 %{__libtoolize}
-%{__aclocal}
+%{__aclocal} -I m4
 %{__autoconf}
 %{__autoheader}
 %{__automake}
@@ -125,6 +131,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/morph
 %attr(755,root,root) %{_bindir}/xmorph
 %attr(755,root,root) %{_libdir}/libxmorph.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libxmorph.so.1
 %{_datadir}/xmorph
 %{_mandir}/man1/morph.1*
 %{_mandir}/man1/xmorph.1*

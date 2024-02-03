@@ -1,0 +1,11 @@
+--- xmorph-20060817/gtkmorph/utils.h.orig	2006-01-27 14:32:01.000000000 +0100
++++ xmorph-20060817/gtkmorph/utils.h	2024-02-03 19:01:07.664657611 +0100
+@@ -63,7 +63,7 @@ do_warp_an_image_new(int lp);
+  *  shows libc error 
+  */
+ 
+-inline  void 
++void 
+ showerr(const char *file, const  char *msg);
+ 
+ 
