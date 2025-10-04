@@ -1,0 +1,197 @@
+--- xmorph-20060817/gtkmorph/callbacks_warped.c.orig	2006-03-05 19:05:36.000000000 +0100
++++ xmorph-20060817/gtkmorph/callbacks_warped.c	2025-10-04 12:28:23.281269218 +0200
+@@ -51,7 +51,7 @@ on_drawingarea_warped_expose_event     (
+   //extern movie_pixmaps_num ;
+ 
+   //if(movie_pixmaps_num == 0) return FALSE ;
+-  g_return_if_fail(pixmap);
++  g_return_val_if_fail(pixmap, FALSE);
+   //g_return_if_fail(movie_pixmaps[0]);
+ 
+   //g_(pixmap);
+--- xmorph-20060817/gtkmorph/gtksettings.c.orig	2006-01-27 12:28:10.000000000 +0100
++++ xmorph-20060817/gtkmorph/gtksettings.c	2025-10-04 12:36:13.883976367 +0200
+@@ -146,7 +146,7 @@ gtk_settings_set_sensitive(char *name,gp
+     if(strcmp(name,thesettings[lp])==0)
+       {
+ 	GtkObject  *item = thesettings[lp+4];
+-	gtk_widget_set_sensitive(item ,(value)?TRUE:FALSE);
++	gtk_widget_set_sensitive(GTK_WIDGET(item) ,(value)?TRUE:FALSE);
+ 	return ;
+       }
+     lp+=GTKSETTINGS_BLOCKS_SIZE;
+@@ -172,11 +172,11 @@ gtk_settings_set_value(char *name,gpoint
+ 	  gpointer p=gtk_object_get_data(item,"submenu"); 
+ 	  if (p) {
+ 	    GList* L= gtk_container_get_children(p);
+-	    int len=g_slist_length (L);
+-	    g_return_if_fail(value>=0 && value< len );
+-	    GSList* nth=g_slist_nth(L,value);
++	    int len=g_list_length (L);
++	    g_return_val_if_fail(value>=0 && value< len, FALSE);
++	    GList* nth=g_list_nth(L,value);
+ 	    GtkWidget* radio_menu_item= nth->data;
+-	    g_return_if_fail(radio_menu_item);
++	    g_return_val_if_fail(radio_menu_item, FALSE);
+ 	    gtk_check_menu_item_set_active
+ 	      (GTK_CHECK_MENU_ITEM (radio_menu_item),TRUE);
+ 	  } else	  
+--- xmorph-20060817/gtkmorph/callbacks_fs_mesh.c.orig	2006-01-28 10:07:40.000000000 +0100
++++ xmorph-20060817/gtkmorph/callbacks_fs_mesh.c	2025-10-04 12:48:03.794730767 +0200
+@@ -146,8 +146,8 @@ on_save_diff_clicked                   (
+   int i = GPOINTER_TO_UINT(gtk_widget_get_data_top(GTK_WIDGET(button),"imagenum")); 
+ 
+   if(sp->im_mesh_diff[i]==NULL)    {
+-    GtkWidget *m=create_menu_of_images(i,diff_save_it,TRUE);
+-      gtk_menu_popup(m,//GtkMenu *menu,
++    GtkWidget *m=create_menu_of_images(i,(GtkSignalFunc)diff_save_it,TRUE);
++      gtk_menu_popup(GTK_MENU(m),//GtkMenu *menu,
+ 		 NULL,//GtkWidget *parent_menu_shell,
+ 		 NULL,//GtkWidget *parent_menu_item,
+ 		 NULL,//GtkMenuPositionFunc func,
+--- xmorph-20060817/gtkmorph/callbacks_fs.c.orig	2006-01-27 10:44:11.000000000 +0100
++++ xmorph-20060817/gtkmorph/callbacks_fs.c	2025-10-04 16:45:04.411002529 +0200
+@@ -202,7 +202,7 @@ void create_list_of_formats()
+ {
+   if(readable_formats==NULL) {
+     readable_formats =gdk_pixbuf_get_formats ();
+-    g_slist_foreach (readable_formats, add_if_writable, &writable_formats);
++    g_slist_foreach (readable_formats, (GFunc)add_if_writable, &writable_formats);
+   }
+ }
+  // find image type according to extension (if any)
+@@ -278,7 +278,7 @@ GtkWidget * create_image_type_combo()
+   } 
+   gtk_combo_box_append_text(GTK_COMBO_BOX(C),"ppm");  
+   gtk_widget_set_name (C,"file_type_combo");
+-  g_signal_connect ((gpointer) C,"changed",on_image_type_changed,NULL);
++  g_signal_connect ((gpointer) C,"changed",(GCallback)on_image_type_changed,NULL);
+   return C;
+ }
+ // set image type according to extension (if any)
+--- xmorph-20060817/gtkmorph/callbacks_subimg.c.orig	2025-10-04 17:03:01.463960234 +0200
++++ xmorph-20060817/gtkmorph/callbacks_subimg.c	2025-10-04 17:04:59.984653758 +0200
+@@ -199,7 +199,9 @@ void on_hscale_mesh_changed    (GtkRange
+   if(spin) {
+     gtk_spin_button_set_value (spin, range->adjustment->value);
+   } else g_critical("no adjustment");
++#if GTK_MAJOR_VERSION == 1
+   return FALSE;
++#endif
+ }
+ 
+ /**************/
+@@ -222,7 +224,9 @@ void on_hscale_image_changed    (GtkRang
+   if(spin) {  
+     gtk_spin_button_set_value (spin, range->adjustment->value);
+   } else g_critical("no adjustment");
++#if GTK_MAJOR_VERSION == 1
+   return FALSE;
++#endif
+ }
+ 
+ 
+--- xmorph-20060817/gtkmorph/movies.c.orig	2025-10-04 18:03:03.331895314 +0200
++++ xmorph-20060817/gtkmorph/movies.c	2025-10-04 18:07:15.523394762 +0200
+@@ -327,9 +327,9 @@ on_stop_clicked                        (
+ static void
+ __movie_set_sensitives__(GtkButton       *button,gboolean b)
+ {
+-  GtkWidget * stop=lookup_widget(button,"stop");
++  GtkWidget * stop=lookup_widget(GTK_WIDGET(button),"stop");
+   gtk_widget_set_sensitive(stop,!b);
+-  gtk_widget_set_sensitive(button,b);
++  gtk_widget_set_sensitive(GTK_WIDGET(button),b);
+ }
+ 
+ 
+@@ -479,13 +479,13 @@ on_movie_ok_clicked                    (
+ 	} else 	  rem=g_strdup_printf(" 0");
+       }
+       //#endif      
+-      GtkWidget* hb= lookup_widget  ( button  ,"information_label");
++      GtkWidget* hb= lookup_widget(GTK_WIDGET(button), "information_label");
+       if(hb) {
+ 	s=g_strdup_printf("F %d ETA %s",ima,rem);
+-	gtk_label_set_text(hb,s);
++	gtk_label_set_text(GTK_LABEL(hb),s);
+       }   else {
+ 	s=g_strdup_printf("frame %d estimated time %s",ima,rem);
+-	gtk_label_set_text(hb,s);
++	gtk_label_set_text(GTK_LABEL(hb),s);
+       }
+       g_free(s); g_free(rem);
+     }
+@@ -580,7 +580,7 @@ on_movie_replay_clicked                (
+ #endif
+ 	  gtk_widget_show_all(animator);
+ 	  gtk_signal_connect (GTK_OBJECT (animator), "delete-event",
+-			      (movie_pixmap_free_callback),
++			      (GCallback)(movie_pixmap_free_callback),
+ 			      NULL);	  
+ 	  animator_loop=g_timeout_add ((int)ceil(3000/tot),draw_frame, g);
+ 	}	else
+--- xmorph-20060817/gtkmorph/utils2_c.orig	2006-05-12 10:36:28.000000000 +0200
++++ xmorph-20060817/gtkmorph/utils2_c	2025-10-04 18:16:37.896758600 +0200
+@@ -59,7 +59,7 @@ void set_info_label(gchar *t)
+   static GtkWidget *m=NULL;
+   if(!m) m=lookup_widget(sp->im_widget[MAIN_WIN],"main_info_label");
+   if(m) {
+-    gtk_label_set_text(m,t);
++    gtk_label_set_text(GTK_LABEL(m),t);
+   } 
+ }
+ 
+--- xmorph-20060817/gtkmorph/feature.c.orig	2006-03-05 12:49:05.000000000 +0100
++++ xmorph-20060817/gtkmorph/feature.c	2025-10-04 18:34:10.519736875 +0200
+@@ -504,13 +504,13 @@ on_ok_button_color_clicked             (
+     show_warning(_("sorry this functions is as yet unimplemented"));
+ #else
+     GdkColor color;
+-    gtk_color_selection_get_current_color(csd->colorsel, &color);
++    gtk_color_selection_get_current_color(GTK_COLOR_SELECTION(csd->colorsel), &color);
+     if(gdk_colormap_alloc_color (gdk_colormap_get_system (),
+ 				 & color,FALSE ,TRUE)) {
+       gdk_gc_set_foreground ( features_gc[feature_n+2], &color); 
+       MY_GTK_DRAW(dac_lookup());
+     }
+-    GtkWidget *csd=lookup_widget(button,"colorselectiondialog");
++    GtkWidget *csd=lookup_widget(GTK_WIDGET(button),"colorselectiondialog");
+     if(csd) gtk_widget_destroy(csd);
+ #endif
+   } else gdk_beep();
+--- xmorph-20060817/gtkmorph/loadsave.c.orig	2025-10-04 18:32:23.832432499 +0200
++++ xmorph-20060817/gtkmorph/loadsave.c	2025-10-04 18:35:14.783454336 +0200
+@@ -471,10 +471,10 @@ internal error: the image doesnt exist!"
+     GSList *F;
+ #ifdef HAVE_GTK_COMBO
+     if(fileselection_g) {
+-      GtkWidget*  C=lookup_widget (fileselection_g,"file_type_combo");
++      GtkWidget*  C=lookup_widget (GTK_WIDGET(fileselection_g),"file_type_combo");
+       //if(!C)      { g_critical("cannot save! internal error"); return TRUE; }
+       if(C)
+-	sel = gtk_combo_box_get_active(C);
++	sel = gtk_combo_box_get_active(GTK_COMBO_BOX(C));
+     }
+ #endif
+     if(sel<0 || sel >wl) 
+--- xmorph-20060817/gtkmorph/settings.c.orig	2025-10-04 19:16:53.005087400 +0200
++++ xmorph-20060817/gtkmorph/settings.c	2025-10-04 19:17:54.822126010 +0200
+@@ -378,7 +378,7 @@ show_diff_show (GtkMenuItem     *menuite
+ 			gpointer         data)
+ {
+   unsigned int to , from = GPOINTER_TO_INT(data);
+-  GtkWidget *m=create_menu_of_images(from,show_diff_set_it,FALSE);  
++  GtkWidget *m=create_menu_of_images(from,(GtkSignalFunc)show_diff_set_it,FALSE);  
+   {
+     GtkWidget *i = gtk_separator_menu_item_new     ();
+     gtk_widget_show(i);gtk_container_add (GTK_CONTAINER (m), i);
+@@ -388,7 +388,7 @@ show_diff_show (GtkMenuItem     *menuite
+ 			GTK_SIGNAL_FUNC (show_diff_set_it ),
+ 			GINT_TO_POINTER( 256 * from) );
+   }
+-  gtk_menu_popup(m,//GtkMenu *menu,
++  gtk_menu_popup(GTK_MENU(m),//GtkMenu *menu,
+ 		 NULL,//GtkWidget *parent_menu_shell,
+ 		 NULL,//GtkWidget *parent_menu_item,
+ 		 NULL,//GtkMenuPositionFunc func,

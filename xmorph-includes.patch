@@ -1,0 +1,246 @@
+--- xmorph-20060817/libmorph/RgbaImage.c.orig	2025-10-04 12:01:48.672122852 +0200
++++ xmorph-20060817/libmorph/RgbaImage.c	2025-10-04 12:09:27.934755233 +0200
+@@ -42,6 +42,7 @@ extern int prog_nsteps;
+ 
+ #include "my_malloc.h"
+ #include "tga.h"
++#include "warp2.h"
+ #include "RgbaImage.h"
+ 
+ 
+--- xmorph-20060817/libmorph/relax.c.orig	2006-03-05 16:13:00.000000000 +0100
++++ xmorph-20060817/libmorph/relax.c	2025-10-04 12:13:23.372772370 +0200
+@@ -1,5 +1,6 @@
+ 
+-#include "stdio.h"
++#include <stdio.h>
++#include <stdlib.h>
+ 
+ #include "mesh.h"
+ 
+--- xmorph-20060817/morph/main.c.orig	2025-10-04 12:13:35.782843554 +0200
++++ xmorph-20060817/morph/main.c	2025-10-04 12:17:35.327550913 +0200
+@@ -33,6 +33,7 @@ Boston, MA 02111-1307, USA.
+ #include <string.h>
+ #include <math.h>
+ 
++#define RGBA_MESH_WARP
+ #include "mesh.h"
+ #include "RgbaImage.h"
+ 
+--- xmorph-20060817/xmorph/sequence.c.orig	2025-10-04 12:17:51.934312836 +0200
++++ xmorph-20060817/xmorph/sequence.c	2025-10-04 12:21:50.152345919 +0200
+@@ -31,6 +31,7 @@ int prog_nsteps = 0;
+ #include "diw_map.h"
+ #include "mjg_dialog.h"
+ #include "warp.h"
++#include "warp2.h"
+ #include "mesh.h"
+ #include "RgbaImage.h"
+ #include "image_diw.h"
+--- xmorph-20060817/gtkmorph/dialogs.c.orig	2006-01-27 11:04:16.000000000 +0100
++++ xmorph-20060817/gtkmorph/dialogs.c	2025-10-04 12:48:59.685053164 +0200
+@@ -17,6 +17,7 @@
+ #include "interface.h"
+ #include "support.h"
+ #include "dialogs.h"
++#include "utils.h"
+ //#include "settings.h"
+ 
+ /****************************************************************************/
+--- xmorph-20060817/gtkmorph/callbacks_help.c.orig	2006-01-08 17:52:31.000000000 +0100
++++ xmorph-20060817/gtkmorph/callbacks_help.c	2025-10-04 16:41:15.739665077 +0200
+@@ -9,6 +9,7 @@
+ 
+ #include "support.h"
+ #include "callbacks.h"
++#include "dialogs.h"
+ 
+ 
+ void
+--- xmorph-20060817/gtkmorph/main.c.orig	2006-08-19 17:56:51.000000000 +0200
++++ xmorph-20060817/gtkmorph/main.c	2025-10-04 16:42:38.133480314 +0200
+@@ -26,6 +26,7 @@
+ #include <string.h>
+  #include <stdlib.h>
+ 
++#include "colors.h"
+ #include "interface.h"
+ #include "support.h"
+ #include "callbacks.h"
+@@ -57,6 +58,9 @@
+ #include "fourier.hh"
+ #include "wavelet.hh"
+ 
++void feature_init(void);
++void fourier_init(void);
++
+ GtkFileSelection   *fileselection_g=NULL; 
+ 
+ 
+--- xmorph-20060817/gtkmorph/callbacks_edit.c.orig	2006-03-04 22:50:40.000000000 +0100
++++ xmorph-20060817/gtkmorph/callbacks_edit.c	2025-10-04 16:46:27.344820239 +0200
+@@ -21,8 +21,11 @@
+ #include "support.h"
+ #include "dialogs.h"
+ #include "gtktopdata.h"
++#include "feature.h"
+ #include "fourier.hh"
+ 
++void mag_draw(void);
++
+ /***************************************************************
+ 
+  *		drawing area mesh editing
+--- xmorph-20060817/gtkmorph/gtk_subimagesel.c.orig	2006-03-05 13:09:08.000000000 +0100
++++ xmorph-20060817/gtkmorph/gtk_subimagesel.c	2025-10-04 16:56:14.184914352 +0200
+@@ -31,6 +31,7 @@ but I am too lazy to
+ #include "utils.h"
+ #include "main.h"
+ #include "dialogs.h"
++#include "loadsave_mesh.h"
+ 
+ 
+ 
+--- xmorph-20060817/gtkmorph/callbacks_subimg.c.orig	2006-01-28 17:26:42.000000000 +0100
++++ xmorph-20060817/gtkmorph/callbacks_subimg.c	2025-10-04 17:03:01.463960234 +0200
+@@ -5,6 +5,7 @@
+ #include <gtk/gtk.h>
+ 
+ #include "gtk-meta.h"
++#include "gtktopdata.h"
+ 
+ #ifdef USE_IMLIB
+ #include <gdk_imlib.h>
+@@ -15,6 +16,9 @@
+ #include "main.h"
+ #include "support.h"
+ 
++void on_interpolate_meshes1_activate(GtkMenuItem *menuitem, gpointer user_data);
++void on_do_mixing_clicked(GtkButton *button, gpointer user_data);
++
+ /***************************************************************************
+ **************************************************************************
+ 
+--- xmorph-20060817/gtkmorph/callbacks_main.c.orig	2006-08-17 18:05:04.000000000 +0200
++++ xmorph-20060817/gtkmorph/callbacks_main.c	2025-10-04 17:53:44.658573290 +0200
+@@ -15,6 +15,7 @@
+ 
+ 
+ 
++#include "gdk-pixbuf-extra.h"
+ #include "gtk-meta.h"
+ 
+ #include <math.h>
+--- xmorph-20060817/gtkmorph/movies.c.orig	2006-05-25 11:22:46.000000000 +0200
++++ xmorph-20060817/gtkmorph/movies.c	2025-10-04 18:02:50.348484785 +0200
+@@ -40,11 +40,13 @@
+ #include "loadsave_ply.h"
+ #endif
+ 
+-//#include "mesh-gtk.h"
+-//#include "utils.h"
++#include "mesh-gtk.h"
++#include "utils.h"
++#include "support.h"
+ //#include "../libmorph/relax.h"
+ #include "movies.h"
+ 
++void create_list_of_formats();
+ 
+ //#define PRINT_MORPH_TIME
+ 
+--- xmorph-20060817/gtkmorph/utils.c.orig	2006-03-05 19:05:58.000000000 +0100
++++ xmorph-20060817/gtkmorph/utils.c	2025-10-04 18:19:37.504503904 +0200
+@@ -14,6 +14,7 @@
+ #include <gtk/gtk.h>
+ 
+ #include "gtk-meta.h"
++#include "gtksettings.h"
+ 
+ #ifdef USE_IMLIB
+ #include <gdk_imlib.h>
+--- xmorph-20060817/gtkmorph/loadsave.c.orig	2006-03-04 16:23:33.000000000 +0100
++++ xmorph-20060817/gtkmorph/loadsave.c	2025-10-04 18:28:44.864456981 +0200
+@@ -30,6 +30,7 @@
+ 
+ 
+ #include "callbacks.h"
++#include "callbacks_fs.h"
+ #include "interface.h"
+ #include "support.h"
+ 
+@@ -44,7 +45,10 @@
+ //#include "settings.h"
+ #include "dialogs.h"
+ #include "loadsave.h"
++#include "loadsave_mesh.h"
+ 
++void subimages_spinbuttons_set(int i);
++void spinbutton_res_set();
+ 
+ 
+ /************************************************************************
+--- xmorph-20060817/gtkmorph/loadsave_mesh.c.orig	2006-03-05 13:19:28.000000000 +0100
++++ xmorph-20060817/gtkmorph/loadsave_mesh.c	2025-10-04 18:31:06.525303740 +0200
+@@ -48,6 +48,9 @@
+ #include "utils.h"
+ #include "feature.h"
+ 
++gboolean is_null(const gchar *s);
++void subimages_spinbuttons_set(int i);
++void scale_loaded_pixbuf_et_rrggbb(int lp);
+ 
+ /***************************************************************
+  synch mesh labels
+--- xmorph-20060817/gtkmorph/utils-mesh.c.orig	2006-01-28 17:29:06.000000000 +0100
++++ xmorph-20060817/gtkmorph/utils-mesh.c	2025-10-04 19:13:13.703767900 +0200
+@@ -9,7 +9,9 @@
+ #include "dialogs.h"
+ #include "gtk-meta.h"
+ #include "support.h"
++#include "callbacks_subimg.h"
+ 
++void do_mesh_factors_equal();
+ 
+ 
+ /* gboolean mesh_need_saving(int lp){ */
+--- xmorph-20060817/gtkmorph/guide.c.orig	2006-01-25 20:44:14.000000000 +0100
++++ xmorph-20060817/gtkmorph/guide.c	2025-10-04 19:14:32.890911023 +0200
+@@ -27,10 +27,13 @@
+ #include "guide.h"
+ #include "support.h"
+ #include "callbacks.h"
++#include "utils.h"
+ 
+ 
+ #include "main.h"
+ 
++void guide_init_text(void);
++
+ /* trick to have a translation that is not immediate 
+ //#ifdef ENABLE_NLS 
+ //#undef _
+--- xmorph-20060817/gtkmorph/settings.c.orig	2006-01-28 09:36:38.000000000 +0100
++++ xmorph-20060817/gtkmorph/settings.c	2025-10-04 19:16:53.005087400 +0200
+@@ -27,7 +27,9 @@
+ #include "support.h"
+ #include "main.h"
+ #include "utils.h"
++#include "mesh-gtk.h"
+ 
++void set_state(void);
+ 
+ 
+ void
+--- xmorph-20060817/gtkmorph/mesh-gtk.c.orig	2006-03-04 22:52:08.000000000 +0100
++++ xmorph-20060817/gtkmorph/mesh-gtk.c	2025-10-04 19:21:54.883571399 +0200
+@@ -53,6 +53,8 @@
+ #include "utils.h"
+ #include "support.h"
+ 
++void redraw_images(void);
++void adjust_1_point_wrt_morph(MeshT *dstmesh, GdkPixbuf *dst, int mi, int mj);
+ 
+ #ifdef  G_THREADS_ENABLED
+ #if GLIB_MAJOR_VERSION >= 2

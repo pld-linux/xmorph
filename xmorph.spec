@@ -6,8 +6,8 @@ Summary:	An X Window System tool for creating morphed images
 Summary(pl.UTF-8):	Narzędzie do morphingu pod X Window System
 Name:		xmorph
 Version:	20060817
-Release:	1
-License:	GPL
+Release:	2
+License:	GPL v2+
 Group:		X11/Applications/Graphics
 Source0:	https://downloads.sourceforge.net/xmorph/%{name}_%{version}.tar.gz
 # Source0-md5:	b4128d90c458be6d2fca9fc6045b6ddb
@@ -16,6 +16,8 @@ Patch1:		%{name}-libname.patch
 Patch2:		%{name}-info.patch
 Patch3:		%{name}-format.patch
 Patch4:		%{name}-inline.patch
+Patch5:		%{name}-includes.patch
+Patch6:		%{name}-types.patch
 URL:		https://xmorph.sourceforge.net/
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
@@ -88,8 +90,11 @@ Statyczna biblioteka xmorph.
 %patch -P2 -p1
 %patch -P3 -p1
 %patch -P4 -p1
+%patch -P5 -p1
+%patch -P6 -p1
 
 echo 'AM_DEFUN([AM_PATH_GTK],[$3])' > acinclude.m4
+echo 'fr it' > po/LINGUAS
 
 %build
 %{__gettextize}
